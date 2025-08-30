@@ -1,0 +1,164 @@
+<div class="container-fluid">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-box-open me-2"></i>Lumiere
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="d-flex align-items-center ms-auto">
+          <span class="text-light me-3">Bienvenue, {{ user?.prenom }} {{ user?.nom }}</span>
+          <button class="btn btn-outline-light" (click)="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Dashboard Content -->
+  <div class="container mt-4">
+    <h1 class="mb-4">Tableau de bord</h1>
+    
+    <!-- Stats Cards -->
+    <div class="row" *ngIf="stats">
+      <!-- Users Card -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                  Utilisateurs
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{ stats.totalUsers }} ({{ stats.activeUsers }} actifs)
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-users fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Persons Card -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Livreurs
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{ stats.totalDeliveryPersons }} ({{ stats.activeDeliveryPersons }} actifs)
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-truck fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventories Card -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                  Inventaires
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{ stats.totalInventories }} ({{ stats.activeInventories }} actifs)
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-warehouse fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Articles Card -->
+      <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Articles
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  {{ stats.totalArticles }} ({{ stats.activeArticles }} actifs)
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-boxes fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+      <!-- Quick Actions -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Actions rapides</h6>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <button class="btn btn-primary w-100" routerLink="/users">
+                  <i class="fas fa-user-plus me-1"></i> Nouvel utilisateur
+                </button>
+              </div>
+              <div class="col-md-6 mb-3">
+                <button class="btn btn-success w-100" routerLink="/delivery-persons">
+                  <i class="fas fa-truck me-1"></i> Nouveau livreur
+                </button>
+              </div>
+              <div class="col-md-6 mb-3">
+                <button class="btn btn-info w-100" routerLink="/inventories">
+                  <i class="fas fa-warehouse me-1"></i> Nouvel inventaire
+                </button>
+              </div>
+              <div class="col-md-6 mb-3">
+                <button class="btn btn-warning w-100" routerLink="/articles">
+                  <i class="fas fa-box me-1"></i> Nouvel article
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System Status -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">État du système</h6>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-1"></i> Tous les systèmes fonctionnent normalement
+            </div>
+            <div class="mb-1"><small>Dernière mise à jour: {{ today | date:'medium' }}</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

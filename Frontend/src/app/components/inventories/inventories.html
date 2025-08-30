@@ -1,0 +1,169 @@
+<div class="container-fluid">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-box-open me-2"></i>Lumiere
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="d-flex align-items-center ms-auto">
+          <span class="text-light me-3">Bienvenue, {{ user?.prenom }} {{ user?.nom }}</span>
+          <button class="btn btn-outline-light" (click)="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Gestion des Inventaires</h2>
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="fas fa-plus me-1"></i> Nouvel inventaire
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow">
+      <div class="card-body">
+        <div class="table-responsive" *ngIf="!loading; else loadingTemplate">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th (click)="sort('idInventaire')" class="sortable">
+                  ID <i class="{{ getSortIconClass('idInventaire') }}"></i>
+                </th>
+                <th (click)="sort('nomInventaire')" class="sortable">
+                  Nom <i class="{{ getSortIconClass('nomInventaire') }}"></i>
+                </th>
+                <th (click)="sort('descriptionInventaire')" class="sortable">
+                  Description <i class="{{ getSortIconClass('descriptionInventaire') }}"></i>
+                </th>
+                <th (click)="sort('emplacementInventaire')" class="sortable">
+                  Emplacement <i class="{{ getSortIconClass('emplacementInventaire') }}"></i>
+                </th>
+                <th (click)="sort('responsableInventaire')" class="sortable">
+                  Responsable <i class="{{ getSortIconClass('responsableInventaire') }}"></i>
+                </th>
+                <th (click)="sort('dateCreationInventaire')" class="sortable">
+                  Date création <i class="{{ getSortIconClass('dateCreationInventaire') }}"></i>
+                </th>
+                <th (click)="sort('statutInventaire')" class="sortable">
+                  Statut <i class="{{ getSortIconClass('statutInventaire') }}"></i>
+                </th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let inventory of inventories">
+                <td>{{ inventory.idInventaire }}</td>
+                <td>{{ inventory.nomInventaire }}</td>
+                <td>{{ inventory.descriptionInventaire || '-' }}</td>
+                <td>{{ inventory.emplacementInventaire || '-' }}</td>
+                <td>{{ inventory.responsableInventaire || '-' }}</td>
+                <td>{{ inventory.dateCreationInventaire | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="inventory.statutInventaire ? 'bg-success' : 'bg-secondary'">
+                    {{ inventory.statutInventaire ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditModal(inventory)" title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger me-1" (click)="confirmDelete(inventory)" title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm" 
+                            [ngClass]="inventory.statutInventaire ? 'btn-outline-warning' : 'btn-outline-success'" 
+                            (click)="toggleInventoryStatus(inventory)"
+                            [title]="inventory.statutInventaire ? 'Désactiver' : 'Activer'">
+                      <i class="fas" [ngClass]="inventory.statutInventaire ? 'fa-times' : 'fa-check'"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="inventories.length === 0">
+                <td colspan="8" class="text-center text-muted py-4">
+                  <i class="fas fa-warehouse fa-2x mb-2 d-block"></i>
+                  Aucun inventaire trouvé
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="mt-2">Chargement des inventaires...</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pour ajouter/modifier un inventaire -->
+  <div #inventoryModal class="modal fade" tabindex="-1" aria-labelledby="inventoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inventoryModalLabel">
+            {{ isEditMode ? 'Modifier l\'inventaire' : 'Nouvel inventaire' }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="nomInventaire" class="form-label">Nom *</label>
+                <input type="text" class="form-control" id="nomInventaire" 
+                       [(ngModel)]="inventoryForm.nomInventaire" name="nomInventaire" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="emplacementInventaire" class="form-label">Emplacement</label>
+                <input type="text" class="form-control" id="emplacementInventaire" 
+                       [(ngModel)]="inventoryForm.emplacementInventaire" name="emplacementInventaire">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="responsableInventaire" class="form-label">Responsable</label>
+                <input type="text" class="form-control" id="responsableInventaire" 
+                       [(ngModel)]="inventoryForm.responsableInventaire" name="responsableInventaire">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="statutInventaire" class="form-label">Statut</label>
+                <div class="form-check form-switch mt-2">
+                  <input class="form-check-input" type="checkbox" id="statutInventaire" 
+                         [(ngModel)]="inventoryForm.statutInventaire" name="statutInventaire">
+                  <label class="form-check-label" for="statutInventaire">
+                    {{ inventoryForm.statutInventaire ? 'Actif' : 'Inactif' }}
+                  </label>
+                </div>
+              </div>
+              <div class="col-12 mb-3">
+                <label for="descriptionInventaire" class="form-label">Description</label>
+                <textarea class="form-control" id="descriptionInventaire" rows="3"
+                          [(ngModel)]="inventoryForm.descriptionInventaire" name="descriptionInventaire"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="saveInventory()">
+            {{ isEditMode ? 'Modifier' : 'Créer' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

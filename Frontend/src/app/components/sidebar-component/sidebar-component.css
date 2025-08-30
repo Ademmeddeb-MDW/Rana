@@ -1,0 +1,46 @@
+.sidebar {
+  height: 100vh;
+  width: 280px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.nav-link {
+  padding: 12px 20px;
+  border-left: 3px solid transparent;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left-color: #4e73df;
+}
+
+.nav-link.active {
+  background-color: rgba(78, 115, 223, 0.15);
+  border-left-color: #4e73df;
+}
+
+.form-control, .form-select {
+  color: #fff !important;
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #4e73df;
+  box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}

@@ -1,0 +1,68 @@
+<div class="sidebar bg-dark text-white">
+  <!-- Logo -->
+  <div class="sidebar-header p-4 border-bottom border-secondary">
+    <h5 class="text-center mb-0">
+      <i class="fas fa-box-open me-2"></i>Plateforme de gestion
+    </h5>
+  </div>
+
+  
+
+  <!-- Navigation -->
+  <div class="sidebar-nav">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a 
+          class="nav-link text-white d-flex align-items-center" 
+          [class.active]="isActive('dashboard')"
+          (click)="navigateTo('dashboard')"
+        >
+          <i class="fas fa-tachometer-alt me-2"></i>
+          Dashboard
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          class="nav-link text-white d-flex align-items-center" 
+          [class.active]="isActive('users')"
+          (click)="navigateTo('users')"
+        >
+          <i class="fas fa-users me-2"></i>
+          Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          class="nav-link text-white d-flex align-items-center" 
+          [class.active]="isActive('delivery-persons')"
+          (click)="navigateTo('delivery-persons')"
+        >
+          <i class="fas fa-truck me-2"></i>
+          Delivery people
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          class="nav-link text-white d-flex align-items-center" 
+          [class.active]="isActive('inventories')"
+          (click)="navigateTo('inventories')"
+        >
+          <i class="fas fa-warehouse me-2"></i>
+          Inventories
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          class="nav-link text-white d-flex align-items-center" 
+          [class.active]="isActive('articles')"
+          (click)="navigateTo('articles')"
+        >
+          <i class="fas fa-boxes me-2"></i>
+          Articles
+        </a>
+      </li>
+    </ul>
+  </div>
+
+ 
+</div>

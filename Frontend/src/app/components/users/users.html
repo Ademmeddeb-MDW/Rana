@@ -1,0 +1,193 @@
+<div class="container-fluid">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-box-open me-2"></i>Lumiere
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="d-flex align-items-center ms-auto">
+          <span class="text-light me-3">Bienvenue, {{ user?.prenom }} {{ user?.nom }}</span>
+          <button class="btn btn-outline-light" (click)="logout()">
+            <i class="fas fa-sign-out-alt me-1"></i> Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Gestion des utilisateurs</h2>
+      <button class="btn btn-primary" (click)="openAddModal()">
+        <i class="fas fa-plus me-1"></i> Nouvel utilisateur
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow">
+      <div class="card-body">
+        <div class="table-responsive" *ngIf="!loading; else loadingTemplate">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr>
+                <th (click)="sort('idUser')" class="sortable">
+                  ID <i class="{{ getSortIconClass('idUser') }}"></i>
+                </th>
+                <th (click)="sort('loginUser')" class="sortable">
+                  Login <i class="{{ getSortIconClass('loginUser') }}"></i>
+                </th>
+                <th (click)="sort('prenomUser')" class="sortable">
+                  Prénom <i class="{{ getSortIconClass('prenomUser') }}"></i>
+                </th>
+                <th (click)="sort('nomUser')" class="sortable">
+                  Nom <i class="{{ getSortIconClass('nomUser') }}"></i>
+                </th>
+                <th (click)="sort('mail')" class="sortable">
+                  Email <i class="{{ getSortIconClass('mail') }}"></i>
+                </th>
+                <th (click)="sort('mobileUser')" class="sortable">
+                  Mobile <i class="{{ getSortIconClass('mobileUser') }}"></i>
+                </th>
+                <th (click)="sort('siteUser')" class="sortable">
+                  Site <i class="{{ getSortIconClass('siteUser') }}"></i>
+                </th>
+                <th (click)="sort('dateCreationUser')" class="sortable">
+                  Date de création <i class="{{ getSortIconClass('dateCreationUser') }}"></i>
+                </th>
+                <th (click)="sort('active')" class="sortable">
+                  Statut <i class="{{ getSortIconClass('active') }}"></i>
+                </th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
+                <td>{{ user.idUser }}</td>
+                <td>{{ user.loginUser }}</td>
+                <td>{{ user.prenomUser }}</td>
+                <td>{{ user.nomUser }}</td>
+                <td>{{ user.mail }}</td>
+                <td>{{ user.mobileUser || '-' }}</td>
+                <td>{{ user.siteUser || '-' }}</td>
+                <td>{{ user.dateCreationUser | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="user.active ? 'bg-success' : 'bg-secondary'">
+                    {{ user.active ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-primary me-1" (click)="openEditModal(user)" title="Modifier">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger me-1" (click)="confirmDelete(user)" title="Supprimer">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm" 
+                            [ngClass]="user.active ? 'btn-outline-warning' : 'btn-outline-success'" 
+                            (click)="toggleUserStatus(user)"
+                            [title]="user.active ? 'Désactiver' : 'Activer'">
+                      <i class="fas" [ngClass]="user.active ? 'fa-times' : 'fa-check'"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="users.length === 0">
+                <td colspan="10" class="text-center text-muted py-4">
+                  <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                  Aucun utilisateur trouvé
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #loadingTemplate>
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="mt-2">Chargement des utilisateurs...</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pour ajouter/modifier un utilisateur -->
+  <div #userModal class="modal fade" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="userModalLabel">
+            {{ isEditMode ? 'Modifier l\'utilisateur' : 'Nouvel utilisateur' }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="loginUser" class="form-label">Login *</label>
+                <input type="text" class="form-control" id="loginUser" 
+                       [(ngModel)]="userForm.loginUser" name="loginUser" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="passwordUser" class="form-label">Mot de passe {{ isEditMode ? '(laisser vide pour ne pas changer)' : '*' }}</label>
+                <input type="password" class="form-control" id="passwordUser" 
+                       [(ngModel)]="userForm.passwordUser" name="passwordUser" 
+                       [required]="!isEditMode">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="nomUser" class="form-label">Nom *</label>
+                <input type="text" class="form-control" id="nomUser" 
+                       [(ngModel)]="userForm.nomUser" name="nomUser" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="prenomUser" class="form-label">Prénom *</label>
+                <input type="text" class="form-control" id="prenomUser" 
+                       [(ngModel)]="userForm.prenomUser" name="prenomUser" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="mail" class="form-label">Email *</label>
+                <input type="email" class="form-control" id="mail" 
+                       [(ngModel)]="userForm.mail" name="mail" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="mobileUser" class="form-label">Mobile</label>
+                <input type="text" class="form-control" id="mobileUser" 
+                       [(ngModel)]="userForm.mobileUser" name="mobileUser">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="siteUser" class="form-label">Site</label>
+                <input type="text" class="form-control" id="siteUser" 
+                       [(ngModel)]="userForm.siteUser" name="siteUser">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="active" class="form-label">Statut</label>
+                <div class="form-check form-switch mt-2">
+                  <input class="form-check-input" type="checkbox" id="active" 
+                         [(ngModel)]="userForm.active" name="active">
+                  <label class="form-check-label" for="active">
+                    {{ userForm.active ? 'Actif' : 'Inactif' }}
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="saveUser()">
+            {{ isEditMode ? 'Modifier' : 'Créer' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
